@@ -1,42 +1,51 @@
-# Practical 9: Prim's Algorithm
+# Practical 9
+# Implementation of Prim's Algorithm
 
 INF = 999999
 
-# Weighted adjacency matrix
-graph = [
-    [0, 2, INF, 6, INF],
-    [2, 0, 3, 8, 5],
-    [INF, 3, 0, INF, 7],
-    [6, 8, INF, 0, 9],
-    [INF, 5, 7, 9, 0]
-]
 
-n = len(graph)
+def prim(graph, vertices):
+    selected = [False] * vertices
+    selected[0] = True
 
-selected = [False] * n
-selected[0] = True
+    total_cost = 0
 
-total_cost = 0
+    print("\nEdges in Minimum Spanning Tree:")
 
-print("Edges in Minimum Spanning Tree:")
+    for _ in range(vertices - 1):
+        minimum = INF
+        x = 0
+        y = 0
 
-for _ in range(n - 1):
+        for i in range(vertices):
+            if selected[i]:
+                for j in range(vertices):
+                    if not selected[j] and graph[i][j] != 0:
+                        if graph[i][j] < minimum:
+                            minimum = graph[i][j]
+                            x = i
+                            y = j
 
-    minimum = INF
-    x = 0
-    y = 0
+        print(f"{x} -- {y} = {minimum}")
 
-    for i in range(n):
-        if selected[i]:
-            for j in range(n):
-                if not selected[j] and graph[i][j] < minimum:
-                    minimum = graph[i][j]
-                    x = i
-                    y = j
+        total_cost += minimum
+        selected[y] = True
 
-    print(x, "--", y, ":", minimum)
+    print("Total cost of MST:", total_cost)
 
-    total_cost += minimum
-    selected[y] = True
 
-print("Minimum Cost =", total_cost)
+# Main program
+n = int(input("Enter number of vertices: "))
+
+graph = [[0] * n for _ in range(n)]
+
+print("Enter weighted edges.")
+print("Enter 0 if there is no edge.")
+
+for i in range(n):
+    for j in range(i + 1, n):
+        weight = int(input(f"Weight between {i} and {j}: "))
+        graph[i][j] = weight
+        graph[j][i] = weight
+
+prim(graph, n)

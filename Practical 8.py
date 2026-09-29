@@ -1,50 +1,69 @@
-# Practical 8: Graph Traversal using DFS and BFS
+# Practical 8
+# Implementation of Graph and Searching (DFS and BFS)
 
 from collections import deque
 
+
 # Graph using adjacency list
-graph = {
-    0: [1, 2],
-    1: [0, 3, 4],
-    2: [0, 4],
-    3: [1],
-    4: [1, 2]
-}
+class Graph:
+    def __init__(self, vertices):
+        self.vertices = vertices
+        self.graph = [[] for _ in range(vertices)]
 
-# DFS
-def dfs(graph, start, visited=None):
-    if visited is None:
-        visited = set()
+    # Add an edge
+    def add_edge(self, u, v):
+        self.graph[u].append(v)
+        self.graph[v].append(u)   # Remove this line for directed graph
 
-    visited.add(start)
-    print(start, end=" ")
+    # DFS
+    def dfs(self, start):
+        visited = [False] * self.vertices
+        result = []
 
-    for neighbour in graph[start]:
-        if neighbour not in visited:
-            dfs(graph, neighbour, visited)
+        def dfs_recursive(vertex):
+            visited[vertex] = True
+            result.append(vertex)
 
+            for neighbour in self.graph[vertex]:
+                if not visited[neighbour]:
+                    dfs_recursive(neighbour)
 
-# BFS
-def bfs(graph, start):
-    visited = set()
-    queue = deque([start])
-    visited.add(start)
+        dfs_recursive(start)
+        return result
 
-    while queue:
-        vertex = queue.popleft()
-        print(vertex, end=" ")
+    # BFS
+    def bfs(self, start):
+        visited = [False] * self.vertices
+        queue = deque()
+        result = []
 
-        for neighbour in graph[vertex]:
-            if neighbour not in visited:
-                visited.add(neighbour)
-                queue.append(neighbour)
+        visited[start] = True
+        queue.append(start)
+
+        while queue:
+            vertex = queue.popleft()
+            result.append(vertex)
+
+            for neighbour in self.graph[vertex]:
+                if not visited[neighbour]:
+                    visited[neighbour] = True
+                    queue.append(neighbour)
+
+        return result
 
 
 # Main program
-start = 0
+n = int(input("Enter number of vertices: "))
+e = int(input("Enter number of edges: "))
 
-print("DFS Traversal:")
-dfs(graph, start)
+g = Graph(n)
 
-print("\nBFS Traversal:")
-bfs(graph, start)
+print("Enter edges (u v):")
+for i in range(e):
+    u, v = map(int, input().split())
+    g.add_edge(u, v)
+
+start = int(input("Enter starting vertex: "))
+
+print("DFS Traversal:", g.dfs(start))
+print("BFS Traversal:", g.bfs(start))
